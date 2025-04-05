@@ -1,42 +1,78 @@
-import { useStore } from '../store'
-import CommandCard from './CommandCard'
+import { useState } from 'react';
+import { Command } from '../types';
+import CommandCard from './CommandCard';
+import CommandModal from './CommandModal';
 
-export default function CommandList() {
-  const { commands, searchTerm, selectedCategory, selectedTag } = useStore()
+interface CommandListProps {
+  commands: Command[];
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+}
 
-  const filteredCommands = commands.filter((command) => {
-    const matchesSearch = searchTerm
-      ? command.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        command.command.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        command.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        command.tags?.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()))
-      : true
+export default function CommandList({ 
+  commands, 
+  searchTerm, 
+  setSearchTerm 
+}: CommandListProps) {
+  const [selectedCommand, setSelectedCommand] = useState<Command | null>(null);
 
-    const matchesCategory = selectedCategory
-      ? command.category.toLowerCase() === selectedCategory.toLowerCase()
-      : true
+  // 根据搜索词过滤命令
+  const filteredCommands = searchTerm
+    ? commands.filter(cmd => 
+        cmd.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cmd.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cmd.command.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cmd.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+      )
+    : commands;
 
-    const matchesTag = selectedTag
-      ? command.tags?.some(tag => tag.toLowerCase() === selectedTag.toLowerCase())
-      : true
+  // 打开命令详情模态框
+  const openCommandDetails = (command: Command) => {
+    setSelectedCommand(command);
+  };
 
-    return matchesSearch && matchesCategory && matchesTag
-  })
-
-  console.log('Selected tag:', selectedTag)
-  console.log('Filtered commands:', filteredCommands)
+  // 关闭命令详情模态框
+  const closeCommandDetails = () => {
+    setSelectedCommand(null);
+  };
 
   return (
-    <div className="space-y-4">
-      {filteredCommands.length === 0 ? (
-        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-          没有找到匹配的命令
+    <div>
+      {/* 搜索框 */}
+      <div className="mb-4">
+        <input
+          type="text"
+          placeholder="搜索命令..."
+          className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      {/* 命令列表 */}
+      {filteredCommands.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredCommands.map((command) => (
+            <CommandCard
+              key={command.id}
+              command={command}
+              onClick={() => openCommandDetails(command)}
+            />
+          ))}
         </div>
       ) : (
-        filteredCommands.map((command) => (
-          <CommandCard key={command.id} command={command} />
-        ))
+        <div className="text-center py-10">
+          <p className="text-gray-500">未找到匹配的命令</p>
+        </div>
+      )}
+
+      {/* 命令详情模态框 */}
+      {selectedCommand && (
+        <CommandModal
+          command={selectedCommand}
+          onClose={closeCommandDetails}
+        />
       )}
     </div>
-  )
+  );
 } 

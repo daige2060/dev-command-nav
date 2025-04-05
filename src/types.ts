@@ -1,3 +1,14 @@
+export interface Parameter {
+  name: string;
+  description: string;
+  required: boolean;
+}
+
+export interface Example {
+  description: string;
+  code: string;
+}
+
 export interface Command {
   id: string;
   category: string;

@@ -1,13 +1,4 @@
-import { useState } from 'react'
-import { ClipboardIcon, CheckIcon } from '@heroicons/react/24/outline'
-import toast from 'react-hot-toast'
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter'
-import bash from 'react-syntax-highlighter/dist/esm/languages/hljs/bash'
-import { atomOneDark } from 'react-syntax-highlighter/dist/esm/styles/hljs'
 import { Command } from '../types'
-import { useStore } from '../store'
-
-SyntaxHighlighter.registerLanguage('bash', bash)
 
 interface CommandCardProps {
   command: Command
@@ -15,25 +6,6 @@ interface CommandCardProps {
 }
 
 export default function CommandCard({ command, onClick }: CommandCardProps) {
-  const [copied, setCopied] = useState(false)
-  const { setSelectedTag } = useStore()
-
-  const copyToClipboard = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
-      toast.success('命令已复制到剪贴板')
-      setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
-      toast.error('复制失败')
-    }
-  }
-
-  const handleTagClick = (tag: string) => {
-    console.log('Command card - clicked tag:', tag)
-    setSelectedTag(tag)
-  }
-
   const renderDangerBadge = () => {
     if (command.dangerLevel === undefined) return null;
     

@@ -1,34 +1,59 @@
-import { useEffect } from 'react'
-import { Toaster } from 'react-hot-toast'
-import Navbar from './components/Navbar'
-import Sidebar from './components/Sidebar'
-import CommandList from './components/CommandList'
-import TagFilter from './components/TagFilter'
-import { useStore } from './store'
+import { useEffect, useState } from "react";
+import Navbar from "./components/Navbar";
+import Sidebar from "./components/Sidebar";
+import CommandList from "./components/CommandList";
+import TagFilter from "./components/TagFilter";
+import { commands } from "./data/commands";
 
-function App() {
-  const darkMode = useStore((state) => state.darkMode)
-  const categories = useStore((state) => state.categories)
-  const selectedCategory = useStore((state) => state.selectedCategory)
-  const handleCategorySelect = useStore((state) => state.handleCategorySelect)
-  const availableTags = useStore((state) => state.availableTags)
-  const selectedTags = useStore((state) => state.selectedTags)
-  const handleTagSelect = useStore((state) => state.handleTagSelect)
-  const clearTags = useStore((state) => state.clearTags)
-  const filteredCommands = useStore((state) => state.filteredCommands)
-  const searchTerm = useStore((state) => state.searchTerm)
-  const setSearchTerm = useStore((state) => state.setSearchTerm)
+export default function App() {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
-  }, [darkMode])
+  // 提取所有唯一的类别
+  const categories = Array.from(new Set(commands.map(cmd => cmd.category)));
+
+  // 根据选中的类别过滤命令
+  const filteredByCategory = selectedCategory
+    ? commands.filter(cmd => cmd.category === selectedCategory)
+    : commands;
+
+  // 提取所有唯一的标签
+  const availableTags = Array.from(
+    new Set(
+      filteredByCategory.flatMap(cmd => cmd.tags)
+    )
+  ).sort();
+
+  // 根据选中的标签过滤命令
+  const filteredCommands = selectedTags.length > 0
+    ? filteredByCategory.filter(cmd => 
+        selectedTags.some(tag => cmd.tags.includes(tag))
+      )
+    : filteredByCategory;
+
+  // 处理类别选择
+  const handleCategorySelect = (category: string | null) => {
+    setSelectedCategory(category);
+    setSelectedTags([]);
+  };
+
+  // 处理标签选择
+  const handleTagSelect = (tag: string) => {
+    setSelectedTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag) 
+        : [...prev, tag]
+    );
+  };
+
+  // 清除所有选中的标签
+  const clearTags = () => {
+    setSelectedTags([]);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="container mx-auto px-4 py-8 flex">
         <Sidebar 
@@ -58,9 +83,6 @@ function App() {
           />
         </div>
       </div>
-      <Toaster position="bottom-right" />
     </div>
-  )
-}
-
-export default App 
+  );
+} 

@@ -12,59 +12,48 @@ const categories = [
   { id: 'NPM', name: 'NPM', count: 0 },
 ]
 
-export default function Sidebar() {
-  const { commands, selectedCategory, setSelectedCategory } = useStore()
+interface SidebarProps {
+  categories: string[];
+  selectedCategory: string | null;
+  onSelectCategory: (category: string | null) => void;
+}
 
-  // 计算每个分类的命令数量
-  const categoryCounts = categories.map(category => ({
-    ...category,
-    count: commands.filter(cmd => cmd.category === category.id).length
-  }))
-
-  const handleCategoryClick = (categoryId: string | null) => {
-    console.log('Clicked category:', categoryId)
-    setSelectedCategory(categoryId)
-  }
-
+export default function Sidebar({ 
+  categories, 
+  selectedCategory, 
+  onSelectCategory 
+}: SidebarProps) {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
-      <h2 className="text-lg font-semibold mb-4">分类</h2>
-      <ul className="space-y-2">
-        <li>
+    <div className="w-64 bg-white rounded-lg shadow-md p-4">
+      <h2 className="text-xl font-semibold mb-4">命令类别</h2>
+      <ul>
+        <li className="mb-1">
           <button
-            onClick={() => handleCategoryClick(null)}
-            className={`w-full text-left px-3 py-2 rounded-lg ${
+            className={`w-full text-left px-3 py-2 rounded ${
               selectedCategory === null
-                ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300'
-                : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                ? 'bg-blue-100 text-blue-700'
+                : 'text-gray-700 hover:bg-gray-100'
             }`}
+            onClick={() => onSelectCategory(null)}
           >
-            全部命令
-            <span className="float-right text-sm text-gray-500 dark:text-gray-400">
-              {commands.length}
-            </span>
+            全部
           </button>
         </li>
-        {categoryCounts.map((category) => (
-          category.count > 0 && (
-            <li key={category.id}>
-              <button
-                onClick={() => handleCategoryClick(category.id)}
-                className={`w-full text-left px-3 py-2 rounded-lg ${
-                  selectedCategory === category.id
-                    ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                }`}
-              >
-                {category.name}
-                <span className="float-right text-sm text-gray-500 dark:text-gray-400">
-                  {category.count}
-                </span>
-              </button>
-            </li>
-          )
+        {categories.map((category) => (
+          <li key={category} className="mb-1">
+            <button
+              className={`w-full text-left px-3 py-2 rounded ${
+                selectedCategory === category
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+              onClick={() => onSelectCategory(category)}
+            >
+              {category}
+            </button>
+          </li>
         ))}
       </ul>
     </div>
-  )
+  );
 } 
