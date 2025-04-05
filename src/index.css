@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+}
+
+@layer components {
+  .command-card {
+    @apply transition-all duration-200 hover:shadow-md;
+  }
+  
+  .copy-button {
+    @apply transition-all duration-200;
+  }
+  
+  .search-input {
+    @apply transition-all duration-200;
+  }
+} 
