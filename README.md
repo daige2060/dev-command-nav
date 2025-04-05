@@ -6,22 +6,24 @@
 
 ## 功能特点
 
-- 🔍 支持搜索和标签筛选
-- 🌈 美观现代的卡片式UI
-- 🌙 支持暗色/亮色主题
-- 📋 一键复制命令到剪贴板
-- 📚 包含详细参数说明和使用示例
-- ⚠️ 危险命令警示
+- 📋 集成多种命令类别：Git、Conda、CMD、PowerShell、Linux Shell、NPM、数据库和网络工具
+- 🔍 强大的搜索功能，快速定位需要的命令
+- 🏷️ 标签筛选系统，按标签查找相关命令
+- 📱 响应式设计，适配各种设备屏幕
+- 📚 详细的命令说明、参数解释和使用示例
+- 🌐 提供官方文档链接，方便深入学习
+- ⚠️ 命令危险级别提示，帮助用户安全使用
 
 ## 包含的命令类别
 
-- Git 命令
-- Docker 命令
-- Linux Shell 命令
-- Windows CMD 命令
-- PowerShell 命令
-- Conda 命令
-- NPM 命令
+- **Git命令**：版本控制常用操作
+- **Conda命令**：环境管理与包安装
+- **CMD命令**：Windows命令提示符
+- **PowerShell命令**：Windows PowerShell脚本
+- **Linux Shell命令**：Linux终端操作
+- **NPM命令**：Node.js包管理器
+- **数据库命令**：MySQL、PostgreSQL、MongoDB和Redis
+- **网络工具命令**：curl、wget、ssh、ping和nmap等
 
 ## 本地开发
 

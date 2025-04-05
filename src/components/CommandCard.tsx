@@ -11,9 +11,10 @@ SyntaxHighlighter.registerLanguage('bash', bash)
 
 interface CommandCardProps {
   command: Command
+  onClick: () => void
 }
 
-export default function CommandCard({ command }: CommandCardProps) {
+export default function CommandCard({ command, onClick }: CommandCardProps) {
   const [copied, setCopied] = useState(false)
   const { setSelectedTag } = useStore()
 
@@ -33,96 +34,53 @@ export default function CommandCard({ command }: CommandCardProps) {
     setSelectedTag(tag)
   }
 
+  const renderDangerBadge = () => {
+    if (command.dangerLevel === undefined) return null;
+    
+    const badgeColor = command.dangerLevel === 0
+      ? 'bg-green-100 text-green-800'
+      : command.dangerLevel === 1
+        ? 'bg-yellow-100 text-yellow-800'
+        : 'bg-red-100 text-red-800';
+        
+    const badgeText = command.dangerLevel === 0
+      ? '安全'
+      : command.dangerLevel === 1
+        ? '中等风险'
+        : '高风险';
+        
+    return (
+      <span className={`text-xs font-medium mr-2 px-2.5 py-0.5 rounded ${badgeColor}`}>
+        {badgeText}
+      </span>
+    );
+  };
+
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 ${
-      command.dangerLevel ? 'border-l-4 border-red-500' : ''
-    }`}>
-      <div className="flex items-start justify-between">
-        <div>
-          <h3 className="text-lg font-semibold">{command.title}</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            {command.description}
-          </p>
-          <div className="flex flex-wrap gap-2 mt-2">
-            {command.tags?.map((tag) => (
-              <button
-                key={tag}
-                onClick={() => handleTagClick(tag)}
-                className="px-2 py-1 text-xs rounded-full bg-blue-100 dark:bg-blue-900 
-                         text-blue-600 dark:text-blue-300 hover:bg-blue-200 
-                         dark:hover:bg-blue-800 transition-colors duration-200"
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
+    <div
+      className="bg-white p-4 rounded-md shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+      onClick={onClick}
+    >
+      <div className="flex justify-between items-start mb-2">
+        <h3 className="text-lg font-semibold text-gray-800">{command.title}</h3>
+        <div className="flex items-center">
+          {renderDangerBadge()}
+          <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded">
+            {command.category}
+          </span>
         </div>
-        <button
-          onClick={() => copyToClipboard(command.command)}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-        >
-          {copied ? (
-            <CheckIcon className="h-5 w-5 text-green-500" />
-          ) : (
-            <ClipboardIcon className="h-5 w-5" />
-          )}
-        </button>
       </div>
-
-      <div className="mt-4 font-mono">
-        <SyntaxHighlighter
-          language="bash"
-          style={atomOneDark}
-          customStyle={{
-            padding: '1rem',
-            borderRadius: '0.5rem',
-            fontSize: '0.875rem',
-          }}
-        >
-          {command.command}
-        </SyntaxHighlighter>
+      <p className="text-gray-600 mb-2">{command.description}</p>
+      <div className="bg-gray-100 p-2 rounded font-mono text-sm overflow-x-auto">
+        {command.command}
       </div>
-
-      {command.parameters.length > 0 && (
-        <div className="mt-4">
-          <h4 className="font-semibold mb-2">参数说明：</h4>
-          <ul className="space-y-1">
-            {command.parameters.map((param) => (
-              <li key={param.name} className="text-sm">
-                <span className="font-mono text-blue-600 dark:text-blue-400">
-                  {param.name}
-                </span>
-                {param.required && (
-                  <span className="text-red-500 ml-1">*</span>
-                )}
-                <span className="ml-2">{param.description}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {command.examples.length > 0 && (
-        <div className="mt-4">
-          <h4 className="font-semibold mb-2">使用示例：</h4>
-          {command.examples.map((example, index) => (
-            <div key={index} className="mt-2">
-              <p className="text-sm mb-1">{example.description}</p>
-              <SyntaxHighlighter
-                language="bash"
-                style={atomOneDark}
-                customStyle={{
-                  padding: '0.75rem',
-                  borderRadius: '0.5rem',
-                  fontSize: '0.875rem',
-                }}
-              >
-                {example.code}
-              </SyntaxHighlighter>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="mt-2 flex flex-wrap gap-1">
+        {command.tags.map((tag, index) => (
+          <span key={index} className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded">
+            {tag}
+          </span>
+        ))}
+      </div>
     </div>
   )
 } 
