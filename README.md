@@ -2,6 +2,8 @@
 
 这是一个帮助开发者快速查找和使用常见命令行工具命令的应用程序。
 
+🔗 **在线访问**: [https://marvelous-hamster-03e7a7.netlify.app/](https://marvelous-hamster-03e7a7.netlify.app/)
+
 ## 功能特点
 
 - 🔍 支持搜索和标签筛选
@@ -36,7 +38,7 @@ npm run build
 
 ## 部署
 
-该应用已部署在 [GitHub Pages](https://your-username.github.io/dev-command-nav/) 上。
+该应用已部署在 [Netlify](https://marvelous-hamster-03e7a7.netlify.app/) 上。
 
 ## 贡献
 
